@@ -10,6 +10,8 @@
     <string name="network_error">网络错误，请求数据失败</string>
     <string name="play_count">播放量:%1$s</string>
     <string name="sns_score">评分:%1$s</string>
+    <string name="progress_promt">内容即将呈现</string>
+    <string name="load_more_promt">正在加载</string>
 
     <array name="channel_titles">
         <item>首页</item>

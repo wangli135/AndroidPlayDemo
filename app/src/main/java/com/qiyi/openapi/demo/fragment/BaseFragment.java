@@ -15,7 +15,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
+import android.widget.LinearLayout;
 
 import com.qiyi.openapi.demo.R;
 import com.qiyi.openapi.demo.activity.BaseActivity;
@@ -33,7 +33,7 @@ public abstract class BaseFragment extends Fragment {
     protected Activity mActivity;
     private HandlerThread mWorkThread;
     private Handler mWorkHandler;
-    protected ProgressBar mLoadingView;
+    protected LinearLayout mLoadingView;
 
     public BaseFragment() {
         // Required empty public constructor
@@ -64,7 +64,7 @@ public abstract class BaseFragment extends Fragment {
     protected void initView() {
         View mProgressBar = mRootView.findViewById(R.id.loading_bar);
         if (mProgressBar != null) {
-            mLoadingView = (ProgressBar) mProgressBar;
+            mLoadingView = (LinearLayout) mProgressBar;
         }
 
     }

@@ -55,12 +55,28 @@ public class CategoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         return entityList.size();
     }
 
+    /**
+     * 初始设置数据
+     *
+     * @param entity
+     */
     public void setData(ChannelDetailEntity entity) {
-        reAssembleData(entity);
+        reAssembleData(entity, false);
         this.notifyDataSetChanged();
     }
 
-    private void reAssembleData(ChannelDetailEntity entity) {
+    /**
+     * 增加数据
+     *
+     * @param entity
+     */
+    public void addData(ChannelDetailEntity entity) {
+        reAssembleData(entity, true);
+        this.notifyDataSetChanged();
+    }
+
+
+    private void reAssembleData(ChannelDetailEntity entity, boolean isLoadMore) {
         if (entity == null) {
             return;
         }
@@ -70,7 +86,9 @@ public class CategoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             return;
         }
 
-        entityList.clear();
+        if (!isLoadMore) {
+            entityList.clear();
+        }
         entityList.addAll(videoInfos);
     }
 

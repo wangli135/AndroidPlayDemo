@@ -9,6 +9,12 @@ import com.qiyi.apilib.model.ChannelDetailEntity;
 public interface CategoryContract {
     interface IView extends IBaseContractView {
         void renderChannelList(ChannelDetailEntity channelDetailEntity);
+
+        void dismissLoadMoreView();
+
+        void renderMoreChannelList(ChannelDetailEntity channelDetailEntity);
+
+
     }
 
     interface IPresenter extends IBaseContrackPresenter {
@@ -17,5 +23,8 @@ public interface CategoryContract {
         void loadChannelListFromServer(boolean showLoadingView);
 
         boolean hasMore();
+
+        void loadMoreChannelListFromServer();
+
     }
 }

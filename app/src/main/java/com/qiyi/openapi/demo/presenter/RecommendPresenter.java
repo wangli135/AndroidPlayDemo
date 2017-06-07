@@ -1,7 +1,5 @@
 package com.qiyi.openapi.demo.presenter;
 
-import android.util.Log;
-
 import com.qiyi.apilib.ApiLib;
 import com.qiyi.apilib.model.RecommendEntity;
 import com.qiyi.apilib.net.ApiClient;
@@ -43,6 +41,8 @@ public class RecommendPresenter implements RecommendContract.IPresenter {
         }
         if (showLoadingView) {
             this.mView.showLoadingView();
+        } else {
+            this.mView.showRefreshView();
         }
 
         ApiService apiService = ApiClient.getAPiService(ApiURL.API_REALTIME_HOST);

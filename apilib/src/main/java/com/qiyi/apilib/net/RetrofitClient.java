@@ -1,8 +1,10 @@
 package com.qiyi.apilib.net;
 
 
+import com.qiyi.apilib.utils.FileUtils;
 import com.qiyi.apilib.utils.LogUtils;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.SocketException;
@@ -15,6 +17,7 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import okhttp3.Cache;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -29,7 +32,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RetrofitClient {
     private String TAG = RetrofitClient.class.getSimpleName();
     private String host;
-    private static final int RETRY_COUNT = 1;
+    private static final int RETRY_COUNT = 5;
     private static final int RETRY_WAIT_TIME = 2000;
     private boolean isDebug = false;
     private boolean isRetry = false;
@@ -88,12 +91,12 @@ public class RetrofitClient {
 
 
         //添加缓存
-//        File cacheFile = FileUtils.getDiskCacheDir("response");
-//        if (!cacheFile.exists()) {
-//            cacheFile.exists();
-//        }
-//        Cache cache = new Cache(cacheFile, 40 * 1024 * 1024);//40M响应缓存
-//        clientBuilder.cache(cache);
+        File cacheFile = FileUtils.getDiskCacheDir("response");
+        if (!cacheFile.exists()) {
+            cacheFile.exists();
+        }
+        Cache cache = new Cache(cacheFile, 40 * 1024 * 1024);//40M响应缓存
+        clientBuilder.cache(cache);
 
         return clientBuilder.build();
     }

@@ -5,6 +5,11 @@ package com.qiyi.openapi.demo.presenter;
  */
 
 public interface IBaseContractView {
+
+    void showRefreshView();
+
+    void dismiddRefreshView();
+
     void showLoadingView();
 
     void dismissLoadingView();

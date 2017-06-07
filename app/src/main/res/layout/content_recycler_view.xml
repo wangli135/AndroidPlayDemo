@@ -1,20 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.SwipeRefreshLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/swipe_refresh_layout"
+<com.aspsine.swipetoloadlayout.SwipeToLoadLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/swipeToLoadLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+    android:layout_height="match_parent">
+
+    <com.qiyi.openapi.demo.view.RefreshHeaderView
+        android:id="@id/swipe_refresh_header"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:gravity="center" />
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_view"
-        android:paddingRight="@dimen/video_card_margin_margin_horizontal"
-        android:paddingLeft="@dimen/video_card_margin_margin_horizontal"
+        android:id="@+id/swipe_target"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"/>
+        android:background="@color/white"
+        android:paddingLeft="@dimen/video_card_margin_margin_horizontal"
+        android:paddingRight="@dimen/video_card_margin_margin_horizontal" />
 
-</android.support.v4.widget.SwipeRefreshLayout>
+    <com.qiyi.openapi.demo.view.LoadMoreFooterView
+        android:id="@id/swipe_load_more_footer"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:gravity="center" />
+
+</com.aspsine.swipetoloadlayout.SwipeToLoadLayout>
 
 

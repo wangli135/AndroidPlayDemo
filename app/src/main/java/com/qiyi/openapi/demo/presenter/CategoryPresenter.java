@@ -6,7 +6,6 @@ import com.qiyi.apilib.net.ApiClient;
 import com.qiyi.apilib.net.ApiParamsGen;
 import com.qiyi.apilib.net.ApiURL;
 import com.qiyi.apilib.service.ApiService;
-import com.qiyi.apilib.utils.LogUtils;
 import com.qiyi.apilib.utils.NetWorkTypeUtils;
 import com.qiyi.openapi.demo.model.ChannelID;
 
@@ -32,7 +31,7 @@ public class CategoryPresenter implements CategoryContract.IPresenter {
 
     @Override
     public void resetPageIndex() {
-
+        pageIndex = 1;
     }
 
     @Override
@@ -43,6 +42,8 @@ public class CategoryPresenter implements CategoryContract.IPresenter {
         }
         if (showLoadingView) {
             this.mView.showLoadingView();
+        } else {
+            this.mView.showRefreshView();
         }
 
         ApiService apiService = ApiClient.getAPiService(ApiURL.API_REALTIME_HOST);
@@ -54,8 +55,9 @@ public class CategoryPresenter implements CategoryContract.IPresenter {
                     @Override
                     public void onNext(ChannelDetailEntity channelDetailEntity) {
                         mView.dismissLoadingView();
+                        mView.dismiddRefreshView();
                         if (channelDetailEntity != null) {
-                            LogUtils.i("TAG", channelDetailEntity.toString());
+                            pageIndex++;
                             mView.renderChannelList(channelDetailEntity);
                         }
                     }
@@ -71,6 +73,7 @@ public class CategoryPresenter implements CategoryContract.IPresenter {
                     }
                 });
     }
+
 
     /**
      * 根据Channel ID获取Channel Name
@@ -107,5 +110,44 @@ public class CategoryPresenter implements CategoryContract.IPresenter {
     @Override
     public boolean hasMore() {
         return false;
+    }
+
+    /**
+     * 加载更多的Video
+     */
+    @Override
+    public void loadMoreChannelListFromServer() {
+
+        if (!NetWorkTypeUtils.isNetAvailable(ApiLib.CONTEXT)) {
+            mView.showNetWorkErrorView();
+            return;
+        }
+
+        ApiService apiService = ApiClient.getAPiService(ApiURL.API_REALTIME_HOST);
+        apiService.qiyiChannelDetail(ApiParamsGen.genChannelDetailParams(String.valueOf(mChannelId), getChannelNameById(mChannelId), pageIndex, DEFAULT_SIZE))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new DisposableObserver<ChannelDetailEntity>() {
+
+                    @Override
+                    public void onNext(ChannelDetailEntity channelDetailEntity) {
+                        mView.dismissLoadMoreView();
+                        if (channelDetailEntity != null) {
+                            pageIndex++;
+                            mView.renderMoreChannelList(channelDetailEntity);
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        mView.dismissLoadMoreView();
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        mView.dismissLoadingView();
+                    }
+                });
+
     }
 }

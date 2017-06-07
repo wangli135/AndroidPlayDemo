@@ -6,11 +6,9 @@
 
     <include layout="@layout/content_recycler_view" />
 
-    <ProgressBar
+    <include
         android:id="@+id/loading_bar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:visibility="visible" />
+        layout="@layout/progress_layout"
+        android:visibility="visible"></include>
 
 </android.support.design.widget.CoordinatorLayout>
