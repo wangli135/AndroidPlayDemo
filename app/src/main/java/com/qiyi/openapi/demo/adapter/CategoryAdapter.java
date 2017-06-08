@@ -39,7 +39,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.card_video_info_item, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.card_video_info_item_1, parent, false);
         return new VideoInfoViewHolder(view);
     }
 
@@ -94,15 +94,13 @@ public class CategoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     class VideoInfoViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         ImageView cover;
+        TextView isVip;
         TextView name;
-        TextView playCount;
-        TextView snsScore;
 
         public VideoInfoViewHolder(View itemView) {
             super(itemView);
-            name = (TextView) itemView.findViewById(R.id.item_image_name);
-            playCount = (TextView) itemView.findViewById(R.id.item_image_description);
-            snsScore = (TextView) itemView.findViewById(R.id.item_image_description2);
+            name = (TextView) itemView.findViewById(R.id.item_name);
+            isVip = (TextView) itemView.findViewById(R.id.item_isvip);
             cover = (ImageView) itemView.findViewById(R.id.item_image_img);
             itemView.setOnClickListener(this);
             resizeImageView(cover);
@@ -120,6 +118,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             cover.setMinimumHeight(coverHeight);
             cover.setMaxHeight(coverHeight);
             cover.setMaxHeight(coverWidth);
+//            cover.setMaxWidth(coverWidth);
             cover.setMinimumWidth(coverWidth);
             cover.setAdjustViewBounds(false);
             LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) cover.getLayoutParams();
@@ -136,17 +135,14 @@ public class CategoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 name.setText("");
             }
 
-            if (!StringUtils.isEmpty(video.playCountText)) {
-                playCount.setText(context.getString(R.string.play_count, video.playCountText));
+            if ("1".equals(video.isVip)) {
+                isVip.setText("VIP");
+//                isVip.setBackgroundColor(Color.GREEN);
             } else {
-                playCount.setText("");
+                isVip.setVisibility(View.INVISIBLE);
+//                isVip.setText("1080P");
             }
 
-            if (!StringUtils.isEmpty(video.snsScore)) {
-                snsScore.setText(context.getString(R.string.sns_score, video.snsScore));
-            } else {
-                snsScore.setText("");
-            }
 
             Glide.clear(cover); //清除缓存
             Glide.with(ApiLib.CONTEXT).load(ImageUtils.getRegImage(video.img, ImageUtils.IMG_260_360)).animate(R.anim.alpha_on).into(cover);

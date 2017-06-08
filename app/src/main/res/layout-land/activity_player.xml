@@ -14,7 +14,7 @@
         <com.qiyi.video.playcore.QiyiVideoView
             android:id="@+id/id_videoview"
             android:layout_width="match_parent"
-            android:layout_height="200dp" />
+            android:layout_height="match_parent" />
 
         <ImageView
             android:id="@+id/back_iv"

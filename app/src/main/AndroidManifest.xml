@@ -11,6 +11,8 @@
     <!--判断网络连接状态需要-->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
+    <uses-permission android:name="android.permission.CHANGE_CONFIGURATION"/>
+
     <application
         android:name=".ApiDemoApplication"
         android:allowBackup="true"
@@ -23,7 +25,9 @@
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity android:name=".activity.PlayerActivity" />
+        <activity
+            android:name=".activity.PlayerActivity"
+            android:configChanges="keyboard|screenSize|orientation|layoutDirection" />
         <activity android:name=".activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

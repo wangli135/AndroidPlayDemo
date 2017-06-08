@@ -1,22 +1,26 @@
 package com.qiyi.openapi.demo.activity;
 
+import android.content.pm.ActivityInfo;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.qiyi.apilib.utils.LogUtils;
 import com.qiyi.apilib.utils.StringUtils;
+import com.qiyi.apilib.utils.UiUtils;
 import com.qiyi.openapi.demo.R;
 import com.qiyi.video.playcore.ErrorCode;
 import com.qiyi.video.playcore.IQYPlayerHandlerCallBack;
 import com.qiyi.video.playcore.QiyiVideoView;
 
 import java.util.concurrent.TimeUnit;
+
+import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
 
 /**
  * Created by zhouxiaming on 2017/5/9.
@@ -29,11 +33,20 @@ public class PlayerActivity extends BaseActivity {
     private static final int HANDLER_MSG_UPDATE_PROGRESS = 1;
     private static final int HANDLER_DEPLAY_UPDATE_PROGRESS = 1000; // 1s
 
+    private int[] screen;
+
+    private boolean isShowBtn;
+    private boolean isFullScreen;
     private QiyiVideoView mVideoView;
     private SeekBar mSeekBar;
-    private Button mPlayPauseBtn;
+    private ImageView mBackBtn;
+    private ImageView mPlayPauseBtn;
+    private ImageView mZoomBtn;
     private TextView mCurrentTime;
     private TextView mTotalTime;
+
+    private LinearLayout mBottomBarLv;
+
     @Override
     protected int getLayoutResourceId() {
         return R.layout.activity_player;
@@ -42,6 +55,9 @@ public class PlayerActivity extends BaseActivity {
     @Override
     protected void initView() {
         super.initView();
+
+        screen = UiUtils.getScreenWidthAndHeight(this);
+
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         String aid = getIntent().getStringExtra("aid");
         String tid = getIntent().getStringExtra("tid");
@@ -49,26 +65,72 @@ public class PlayerActivity extends BaseActivity {
             finish();
             return;
         }
+
+        mBottomBarLv = (LinearLayout) findViewById(R.id.bottom_bar);
+
         mVideoView = (QiyiVideoView) findViewById(R.id.id_videoview);
         //mVideoView.setPlayData("667737400");
         mVideoView.setPlayData(tid);
+        mVideoView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mBottomBarLv.getVisibility() == View.INVISIBLE) {
+
+                    mBottomBarLv.setVisibility(View.VISIBLE);
+                    mBottomBarLv.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            mBottomBarLv.setVisibility(View.INVISIBLE);
+                        }
+                    }, 2000);
+
+                }
+
+                if (mBackBtn.getVisibility() == View.INVISIBLE) {
+
+                    mBackBtn.setVisibility(View.VISIBLE);
+                    mBackBtn.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            mBackBtn.setVisibility(View.INVISIBLE);
+                        }
+                    }, 2000);
+
+                }
+
+            }
+        });
         //设置回调，监听播放器状态
         setPlayerCallback();
 
         mCurrentTime = (TextView) findViewById(R.id.id_current_time);
         mTotalTime = (TextView) findViewById(R.id.id_total_time);
 
-        mPlayPauseBtn = (Button) findViewById(R.id.id_playPause);
+        mBackBtn = (ImageView) findViewById(R.id.back_iv);
+        mBackBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isFullScreen) {
+                    isFullScreen = false;
+                    setRequestedOrientation(SCREEN_ORIENTATION_PORTRAIT);
+                    mVideoView.setVideoViewSize(screen[0], screen[0] * 9 / 16);
+                } else {
+                    finish();
+                }
+            }
+        });
+
+        mPlayPauseBtn = (ImageView) findViewById(R.id.play_pause_iv);
         mPlayPauseBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (mVideoView.isPlaying()) {
                     mVideoView.pause();
-                    mPlayPauseBtn.setText("Play");
+                    mPlayPauseBtn.setImageResource(R.drawable.ic_play_arrow_white_24dp);
                     mMainHandler.removeMessages(HANDLER_MSG_UPDATE_PROGRESS);
                 } else {
                     mVideoView.start();
-                    mPlayPauseBtn.setText("Pause");
+                    mPlayPauseBtn.setImageResource(R.drawable.ic_pause_white_24dp);
                     mMainHandler.sendEmptyMessageDelayed(HANDLER_MSG_UPDATE_PROGRESS, HANDLER_DEPLAY_UPDATE_PROGRESS);
                 }
             }
@@ -80,8 +142,7 @@ public class PlayerActivity extends BaseActivity {
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                LogUtils.d(TAG, "onProgressChanged, progress = " + progress + ", fromUser = " + fromUser);
-                if(fromUser) {
+                if (fromUser) {
                     mProgress = progress;
                 }
             }
@@ -97,6 +158,36 @@ public class PlayerActivity extends BaseActivity {
                 mVideoView.seekTo(mProgress);
             }
         });
+
+        mZoomBtn = (ImageView) findViewById(R.id.zoom_iv);
+        mZoomBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                int current = mVideoView.getCurrentPosition();
+
+                if (isFullScreen) {
+                    isFullScreen = false;
+                    setRequestedOrientation(SCREEN_ORIENTATION_PORTRAIT);
+                    mVideoView.setVideoViewSize(screen[0], screen[0] * 9 / 16);
+
+                } else {
+                    isFullScreen = true;
+                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                    mVideoView.setVideoViewSize(screen[1], screen[0]);
+                    mBackBtn.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            mBackBtn.setVisibility(View.INVISIBLE);
+                        }
+                    }, 2000);
+                }
+
+                mVideoView.seekTo(current);
+
+            }
+        });
+
     }
 
     private void setPlayerCallback() {
@@ -136,6 +227,7 @@ public class PlayerActivity extends BaseActivity {
         mVideoView = null;
     }
 
+
     /**
      * Query and update the play progress every 1 second.
      */
@@ -143,12 +235,10 @@ public class PlayerActivity extends BaseActivity {
 
         @Override
         public void handleMessage(Message msg) {
-            LogUtils.d(TAG, "handleMessage, msg.what = " + msg.what);
             switch (msg.what) {
                 case HANDLER_MSG_UPDATE_PROGRESS:
                     int duration = mVideoView.getDuration();
                     int progress = mVideoView.getCurrentPosition();
-                    LogUtils.d(TAG, "HANDLER_MSG_UPDATE_PROGRESS, duration = " + duration + ", currentPosition = " + progress);
                     if (duration > 0) {
                         mSeekBar.setMax(duration);
                         mSeekBar.setProgress(progress);
@@ -166,6 +256,7 @@ public class PlayerActivity extends BaseActivity {
 
     /**
      * Convert ms to hh:mm:ss
+     *
      * @param millis
      * @return
      */
@@ -182,7 +273,6 @@ public class PlayerActivity extends BaseActivity {
          */
         @Override
         public void OnSeekSuccess(long l) {
-            LogUtils.i(TAG, "OnSeekSuccess: " + l);
         }
 
         /**
@@ -190,7 +280,6 @@ public class PlayerActivity extends BaseActivity {
          */
         @Override
         public void OnWaiting(boolean b) {
-            LogUtils.i(TAG, "OnWaiting: " + b);
         }
 
         /**
@@ -198,7 +287,7 @@ public class PlayerActivity extends BaseActivity {
          */
         @Override
         public void OnError(ErrorCode errorCode) {
-            LogUtils.i(TAG, "OnError: " + errorCode);
+
             mMainHandler.removeMessages(HANDLER_MSG_UPDATE_PROGRESS);
         }
 
@@ -216,7 +305,22 @@ public class PlayerActivity extends BaseActivity {
          */
         @Override
         public void OnPlayerStateChanged(int i) {
-            LogUtils.i(TAG, "OnPlayerStateChanged: " + i);
+
+            switch (i) {
+                case 16:
+                    dismissBottomBar();
+                    break;
+            }
+
         }
     };
+
+    private void dismissBottomBar() {
+        mBottomBarLv.setVisibility(View.INVISIBLE);
+    }
+
+    private void showBottomBar() {
+        mBottomBarLv.setVisibility(View.VISIBLE);
+    }
+
 }

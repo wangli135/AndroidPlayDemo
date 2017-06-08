@@ -44,6 +44,7 @@ public class RecommendFragment extends BaseFragment implements RecommendContract
         mSwipeToLoadLayout = (SwipeToLoadLayout) mRootView.findViewById(R.id.swipeToLoadLayout);
         mSwipeToLoadLayout.setOnRefreshListener(this);
         mSwipeToLoadLayout.setOnLoadMoreListener(this);
+        mSwipeToLoadLayout.setLoadMoreEnabled(false);
         mRecyclerView = (RecyclerView) mRootView.findViewById(R.id.swipe_target);
 
         GridLayoutManager layoutManager = new GridLayoutManager(mActivity, RecommendAdapter.ROW_NUM);

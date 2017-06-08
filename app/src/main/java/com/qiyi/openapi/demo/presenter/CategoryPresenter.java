@@ -6,6 +6,7 @@ import com.qiyi.apilib.net.ApiClient;
 import com.qiyi.apilib.net.ApiParamsGen;
 import com.qiyi.apilib.net.ApiURL;
 import com.qiyi.apilib.service.ApiService;
+import com.qiyi.apilib.utils.LogUtils;
 import com.qiyi.apilib.utils.NetWorkTypeUtils;
 import com.qiyi.openapi.demo.model.ChannelID;
 
@@ -133,6 +134,7 @@ public class CategoryPresenter implements CategoryContract.IPresenter {
                     public void onNext(ChannelDetailEntity channelDetailEntity) {
                         mView.dismissLoadMoreView();
                         if (channelDetailEntity != null) {
+                            LogUtils.i("TAG", channelDetailEntity.toString());
                             pageIndex++;
                             mView.renderMoreChannelList(channelDetailEntity);
                         }

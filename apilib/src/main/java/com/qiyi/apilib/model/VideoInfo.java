@@ -74,7 +74,10 @@ public class VideoInfo extends BaseEntity {
     @Override
     public String toString() {
         return "VideoInfo{" +
-                ", title='" + title + '\'' +
+                "title='" + title + '\'' +
+                ", pType='" + pType + '\'' +
+                ", totalNum='" + totalNum + '\'' +
+                ", updateNum='" + updateNum + '\'' +
                 '}';
     }
 }
